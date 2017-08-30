@@ -18,6 +18,8 @@
         <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
         <!-- Bootstrap -->
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <!-- Main -->
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     </head>
 
     <body>
@@ -41,6 +43,15 @@
 
         <div class="container">
             {% block content %}
+            {% endblock %}
+        </div>
+        
+        <div class="footer">
+            {% block footer %}
+                <div class="row">
+                    <div class="col-md-12 text-center">Blog - Web Application that gives you a full control over your entries...</div>
+                    <div class="col-md-12 text-center">Developed By: Abdullah Altamimi</div>
+                </div>
             {% endblock %}
         </div>
     </body>

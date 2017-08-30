@@ -1,0 +1,28 @@
+{% import "macros.html" as macros %}
+{% extends "base.html" %}
+
+{% block content %}
+    <script type="text/javascript">
+        function deleteEntry() {
+            var user = confirm("Are you sure about Deleting this record?");
+            if (user) {
+                location.href = "{{ url_for('delete_entry', id=entry.id) }}";
+            }
+            else {
+                document.getElementById("deleteEntry").href = "javascript:deleteEntry();";
+            }
+        }
+    </script>
+    
+    {{ macros.render_entry(entry) }}
+    
+    <!-- Edit / Delete Buttons -->
+    <div class="row">
+        <div class="col-md-6 metadata text-right">
+            <a href="{{ url_for('edit_entry_get', id=entry.id) }}" class="btn btn-primary">Edit</a>
+        </div>
+        <div class="col-md-6 metadata text-left">
+            <a href="javascript:deleteEntry();" class="btn btn-danger" id="deleteEntry">Delete</a>
+        </div>
+    </div>
+{% endblock %}

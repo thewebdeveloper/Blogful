@@ -1,3 +1,9 @@
+.footer {
+    margin-top: 2em;
+    padding: 2em;
+    background-color: #ccc;
+}
+
 .metadata {
     margin-top: 20px;
     font-size: 1.5em;

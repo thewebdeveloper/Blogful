@@ -2,9 +2,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for entry in entries %}
-        {{ macros.render_entry(entry) }}
-    {% endfor %}
+
+    <form>
+        <select name="limit">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
+        <input type="submit" value="Submit"/>
+    </form>
+    
+    {% if limit|int %}
+        {% for entry in entries %}
+            {{ macros.render_entry(entry) }}
+        {% endfor %}
+    {% else %}
+        <h2 class="text-center">{{ limit }}</h2>
+    {% endif %}
     
     <ul class="pager">
         {% if has_next %}
