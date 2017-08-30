@@ -1,7 +1,9 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import login_user, login_required
+from werkzeug.security import check_password_hash
 
 from . import app
-from .database import session, Entry
+from .database import session, Entry, User
 
 
 PAGINATE_BY = 10 # Constant (by convenion)
@@ -50,18 +52,16 @@ def entries(limit=10, page=1):
         limit = 'Float numbers and Text are not allowed in the search!! kindly stick with the dropdown list'
         return render_template("entries.html", limit = limit)
     
-    
-    
-    
-    
-    
+
 
 @app.route("/entry/add", methods=["GET"])
+@login_required
 def add_entry_get():
     return render_template("add_entry.html")
     
     
 @app.route("/entry/add", methods=["POST"])
+@login_required
 def add_entry_post():
     entry = Entry(
         title = request.form["title"],
@@ -100,3 +100,21 @@ def delete_entry(id):
     session.delete(entry)
     session.commit()
     return redirect(url_for("entries"))
+    
+    
+@app.route("/login", methods=['GET'])
+def login_get():
+    return render_template("login.html")
+    
+    
+@app.route("/login", methods=['POST'])
+def login_post():
+    email = request.form["email"]
+    password = request.form["password"]
+    user = session.query(User).filter_by(email=email).first()
+    if not user or not check_password_hash(user.password, password):
+        flash("Incorrect Username or Password", "danger")
+        return redirect(url_for("login_get"))
+        
+    login_user(user)
+    return redirect(request.args.get("next") or url_for("entries"))

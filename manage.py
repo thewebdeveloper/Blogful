@@ -1,11 +1,14 @@
 import os
 from flask_script import Manager
 
+from getpass import getpass
+from werkzeug.security import generate_password_hash
+
 from blog import app
 manager = Manager(app)
 
 
-from blog.database import session, Entry # blog in the same directory
+from blog.database import session, Entry, User # blog in the same directory
 
 
 @manager.command
@@ -24,6 +27,25 @@ def seed():
 			content = content
 		)
 		session.add(entry)
+	session.commit()
+	
+	
+@manager.command
+def addUser():
+	name = input("Name: ")
+	email = input("Email: ")
+	if session.query(User).filter_by(email=email).first():
+		print("User with that email already exists")
+		return
+	
+	password = ""
+	password_2 = ""
+	while len(password) < 8 or password != password_2:
+		password = getpass("Password: ")
+		password_2 = getpass("Re-enter Password: ")
+	user = User(name=name, email=email, 
+				password=generate_password_hash(password))
+	session.add(user)
 	session.commit()
 
 

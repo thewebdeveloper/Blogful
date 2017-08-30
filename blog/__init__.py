@@ -11,3 +11,4 @@ app.config.from_object(config_path)
 # to make use of the app object
 from . import views
 from . import filters
+from . import login
