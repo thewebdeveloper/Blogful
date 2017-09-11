@@ -3,15 +3,30 @@
 
 {% block content %}
 
-    <form>
-        <select name="limit">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-        </select>
-        <input type="submit" value="Submit"/>
-    </form>
+    <div class="row">
+        <div class="col-md-6 text-left">
+            {% if g.user.is_anonymous %}
+                <h4>Login / Register to Add Entries</h4>
+            {% endif %}
+        </div>
+        <div class="col-md-6 text-right">
+            <form role="form">
+                <div class="form-group">
+                    <label>Entries Per Page: </label>
+                    <select name="limit">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                    <input type="submit" value="Submit"/>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <hr>
+    
     
     {% if limit|int %}
         {% for entry in entries %}

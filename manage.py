@@ -1,9 +1,11 @@
 import os
 from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
 from getpass import getpass
 from werkzeug.security import generate_password_hash
 
+from blog.database import Base
 from blog import app
 manager = Manager(app)
 
@@ -47,6 +49,16 @@ def addUser():
 				password=generate_password_hash(password))
 	session.add(user)
 	session.commit()
+	
+	
+class DB(object):
+	def __init__(self, metadata):
+		self.metadata = metadata
+
+
+migrate = Migrate(app, DB(Base.metadata))
+manager.add_command('db', MigrateCommand)
+
 
 
 if __name__ == "__main__":

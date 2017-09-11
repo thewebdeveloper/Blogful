@@ -1,5 +1,5 @@
-from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_user, login_required
+from flask import render_template, request, redirect, url_for, flash, g
+from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import check_password_hash
 
 from . import app
@@ -8,12 +8,16 @@ from .database import session, Entry, User
 
 PAGINATE_BY = 10 # Constant (by convenion)
 
+@app.before_request
+def before_request():
+    g.user = current_user
+
+
 @app.route("/")
 @app.route("/page/<int:page>")
 @app.route("/<int:limit>")
 @app.route("/page/<int:page>/<int:limit>")
 def entries(limit=10, page=1):
-    
     # Zero-indexed page
     page_index = page - 1
     
@@ -53,7 +57,6 @@ def entries(limit=10, page=1):
         return render_template("entries.html", limit = limit)
     
 
-
 @app.route("/entry/add", methods=["GET"])
 @login_required
 def add_entry_get():
@@ -66,6 +69,7 @@ def add_entry_post():
     entry = Entry(
         title = request.form["title"],
         content = request.form["content"],
+        author = current_user
     )
     session.add(entry)
     session.commit()
@@ -80,21 +84,25 @@ def entry(id):
     
 
 @app.route("/entry/<id>/edit", methods=["GET"])
+@login_required
 def edit_entry_get(id):
     entry = session.query(Entry).get(id)
     return render_template("edit_entry.html", entry=entry)
 
     
 @app.route("/entry/<id>/edit", methods=["POST"])
+@login_required
 def edit_entry_put(id):
     entry = session.query(Entry).get(id)
     entry.title = request.form["title"],
-    entry.content = request.form["content"]
+    entry.content = request.form["content"],
+    entry.author = current_user
     session.commit()
     return redirect(url_for("entry", id=id))
     
     
 @app.route("/entry/<id>/delete", methods=['GET'])
+@login_required
 def delete_entry(id):
     entry = session.query(Entry).get(id)
     session.delete(entry)
@@ -117,4 +125,13 @@ def login_post():
         return redirect(url_for("login_get"))
         
     login_user(user)
+    flash("Logged in successfully.", "success")
+    
     return redirect(request.args.get("next") or url_for("entries"))
+    
+    
+@app.route("/logout")
+def logout():
+    logout_user()
+    flash("Logged out successfully.", "success")
+    return redirect(url_for("entries"))

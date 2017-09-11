@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Edit Entry # {{ entry.id }}</h1>
+    <h1>Edit Entry No. {{ entry.id }}</h1>
     
     <form role="form" method="POST">
         <div class="form-group">
@@ -12,8 +12,13 @@
             <label for="content">Content</label>
             <textarea class="form-control" id="content" name="content" rows="20" required>{{ entry.content }}</textarea>
         </div>
-        <button type="submit" class="btn btn-success">Edit</button>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success col-md-3">Edit</button>
+            <div class="col-md-3"></div>
+            <a href="{{ url_for('entry', id=entry.id) }}" class="btn btn-default col-md-3">Cancel</a>
+        </div>
+        
     </form>
     
-    <a href="{{ url_for('entry', id=entry.id) }}" class="btn btn-default">Cancel</a>
+    
 {% endblock %}
